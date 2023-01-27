@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 void yaprak()
 {
@@ -14,6 +15,8 @@ void yaprak()
 
 int parent(int pid1, int pid2)
 {
+    wait(NULL);
+
     char dosya_isim1[20];
     sprintf(dosya_isim1, "%d.txt", pid1);
 
@@ -38,7 +41,7 @@ int parent(int pid1, int pid2)
     fclose(fp3);
 }
 
-int agac_olustur(int yukseklik)
+void agac_olustur(int yukseklik)
 {
     if (yukseklik == 0)
     {
@@ -55,6 +58,10 @@ int agac_olustur(int yukseklik)
         if (pid2 > 0)
         {
             // parent işlem
+            wait(NULL);
+            printf("parent: %d, child1: %d, child2: %d\n", getpid(), pid1, pid2);
+            fflush(stdout);
+            parent(pid1, pid2);
         }
 
         else if (pid2 == 0)
@@ -69,4 +76,9 @@ int agac_olustur(int yukseklik)
         // right child
         agac_olustur(--yukseklik);
     }
+}
+
+int main()
+{
+    agac_olustur(3);
 }
